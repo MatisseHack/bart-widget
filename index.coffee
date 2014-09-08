@@ -84,7 +84,7 @@ style: """
     font-size: 8px
     font-style: italic
     clear: both
-    border-top: solid 1px rgba(#fff,.5)
+    border-top: dotted 1px rgba(#fff,.5)
     padding-top: 5px
 
 """
