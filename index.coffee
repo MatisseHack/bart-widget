@@ -1,6 +1,8 @@
+# You must fill out the STOP_ID
 # A list of stop ID's is available here: http://api.bart.gov/docs/overview/abbrev.aspx
-# eg. dbrk, mont, embr
-STOP_ID = "dbrk"
+# eg. dbrk, mont, embr...
+
+STOP_ID = ""
 
 url = "http://api.bart.gov/api/etd.aspx?cmd=etd&orig=#{STOP_ID}&key=MW9S-E7SL-26DU-VV8V"
 
