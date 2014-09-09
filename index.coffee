@@ -1,6 +1,6 @@
 # You must fill out the STOP_ID
 # A list of stop ID's is available here: http://api.bart.gov/docs/overview/abbrev.aspx
-# eg. dbrk, mont, embr...
+# eg. dbrk, mont, embr, 12th...
 
 STOP_ID = ""
 
@@ -34,9 +34,10 @@ style: """
     border-bottom: solid 1px rgba(#fff,.5)
 
   p
-    margin: 0px
-    white-space:nowrap
-    float:left
+    margin: 2.5px
+    float: left
+    font-size: 14px
+    vertical-align: middle
 
   #station
     transform: rotate(-90deg)
@@ -57,27 +58,36 @@ style: """
     margin-bottom: 5px
     float: left
     clear: both
+    width: 100%
 
   .train
     clear: both
-    float: left
+    width: 100%
 
-  span
-    vertical-align: middle
-    font-size: 14px
-    margin: 2.5px
-    text-align:right
+  .train div
+    display: inline
 
   .min2
     font-size: 10px
-    text-align: right
 
-  .color
-    height: 18px
-    width: 18px
-    border-radius: 5px
+  .times
+    float: right
+
+  .color1
+    height: 14px
+    width: 7px
+    border-top-left-radius: 5px
+    border-bottom-left-radius: 5px
     float: left
-    margin: 2.5px 5px 2.5px 0px
+    margin: 5px 0px 5px 5px
+
+  .color2
+    height: 14px
+    width: 7px
+    border-top-right-radius: 5px
+    border-bottom-right-radius: 5px
+    float: left
+    margin: 5px 5px 5px 0px
 
   #update
     text-align: center
@@ -112,6 +122,8 @@ update: (output, domEl) ->
   xml = $.parseXML(output)
   $xml = $(xml)
 
+  alert ""
+
   $domEl.find('#north').empty()
   $domEl.find('#south').empty()
 
@@ -124,23 +136,38 @@ update: (output, domEl) ->
     $departure = $(departure)
     destination = $departure.find('destination').text()
     $estimates = $departure.find('estimate')
-    min1 = $($estimates[0]).find('minutes').text()
+    min = ["", ""]
+    color = ["", ""]
+    i = 0;
+    j = 0;
+    while $estimates[i] and j < 2
+      min[j] = $($estimates[i]).find('minutes').text()
+      color[j] = $($estimates[i]).find('hexcolor').text()
+      i++
+      if(min[j] != "Leaving")
+        j++
 
-    if($estimates[1])
-      min2 = $($estimates[1]).find('minutes').text()
-    else
-      min2 = ""
-
-    color = $($estimates[0]).find('hexcolor').text()
     direction = $($estimates[0]).find('direction').text().toLowerCase()
+    color[0] = "style='background-color: #{color[0]}'"
+
+    if(color[1])
+      color[1] = "style='background-color: #{color[1]}'"
+    else
+      color[1] = color[0]
 
     element = "<div class='train'>
-      <div class='color' style='background-color: #{color}'></div>
-      <p>
-        <span>#{destination}:</span>
-        <span>#{min1}</span>
-        <span class='min2'>#{min2}</span>
-      </p>
+      <div class='color1' #{color[0]}></div>
+      <div class='color2' #{color[1]}></div>
+      <div>
+        <p>#{destination}:</p>
+      </div>
+      <div class='times'>
+        <p>
+          <span>#{min[0]}</span>
+          <span class='min2'>#{min[1]}</span>
+        </p>
+      </div>
+      </div>
     </div>"
     $(element).appendTo("#" + direction)
 
