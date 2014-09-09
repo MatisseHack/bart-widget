@@ -34,10 +34,13 @@ style: """
     border-bottom: solid 1px rgba(#fff,.5)
 
   p
-    margin: 2.5px
+    margin: 4px
     float: left
     font-size: 14px
     vertical-align: middle
+
+  p span
+    font-size: 10px
 
   #station
     transform: rotate(-90deg)
@@ -66,9 +69,6 @@ style: """
 
   .train div
     display: inline
-
-  .min2
-    font-size: 10px
 
   .times
     float: right
@@ -163,8 +163,8 @@ update: (output, domEl) ->
       </div>
       <div class='times'>
         <p>
-          <span>#{min[0]}</span>
-          <span class='min2'>#{min[1]}</span>
+          #{min[0]}
+          <span>#{min[1]}</span>
         </p>
       </div>
       </div>
