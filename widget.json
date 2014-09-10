@@ -1,0 +1,6 @@
+{
+    "name": "BART Departure Times",
+    "description": "Displays the next two times of departure for each BART train leaving a particular stop",
+    "author": "Matisse Hack",
+    "email": "matisse.hack@gmail.com"
+}
