@@ -1,6 +1,8 @@
 # You must fill out the STOP_ID
 # A list of stop ID's is available here: http://api.bart.gov/docs/overview/abbrev.aspx
 # eg. dbrk, mont, embr, 12th...
+# 
+# Other settings can be found bellow
 
 STOP_ID = ""
 
@@ -11,36 +13,25 @@ command: "curl -s '#{url}'"
 refreshFrequency: 20000
 
 style: """
-  color: #fff
-  top: 250px
+
+  // location on the screen
+  top: 20px
   left: 20px
+
+  // font and font color
+  font-family: Helvetica Neue
+  color: #fff
+
   border-radius 5px
   border solid 1px rgba(#fff,.5)
   padding 5px
-  font-family: Helvetica Neue
 
   h1
     font-size: 14px
     text-transform: uppercase
-    color rgba(#fff,.75)
     border-bottom: solid 1px rgba(#fff,.5)
     text-align: right
-
-  h2
-    font-size: 14px
-    text-transform: uppercase
-    margin: 2.5px
-    padding: 2.5px
-    border-bottom: solid 1px rgba(#fff,.5)
-
-  p
-    margin: 4px
-    float: left
-    font-size: 14px
-    vertical-align: middle
-
-  p span
-    font-size: 10px
+    opacity: 0.75
 
   #station
     transform: rotate(-90deg)
@@ -51,6 +42,13 @@ style: """
     white-space: nowrap
     overflow: hidden
     text-overflow: ellipsis
+
+  h2
+    font-size: 14px
+    text-transform: uppercase
+    margin: 2.5px
+    padding: 2.5px
+    border-bottom: solid 1px rgba(#fff,.5)
 
   #departures
     padding-left: 5px
@@ -63,31 +61,37 @@ style: """
     clear: both
     width: 100%
 
-  .train
+  .entry
     clear: both
     width: 100%
 
-  .train div
-    display: inline
+  .destinations
+    float: left
+
+  p
+    margin: 4px
+    float: left
+    font-size: 14px
+    vertical-align: middle
 
   .times
     float: right
 
-  .color1
-    height: 14px
-    width: 7px
-    border-top-left-radius: 5px
-    border-bottom-left-radius: 5px
-    float: left
-    margin: 5px 0px 5px 5px
+  .times span
+    font-size: 10px
 
-  .color2
-    height: 14px
-    width: 7px
-    border-top-right-radius: 5px
-    border-bottom-right-radius: 5px
+  .color
     float: left
-    margin: 5px 5px 5px 0px
+    margin-top: 5px
+    height: 14px
+    width: 14px
+    overflow: hidden
+    border-radius: 5px
+
+  .subcolor
+    width: 0
+    height: 0
+    border-left: 14px solid transparent
 
   #update
     text-align: center
@@ -118,11 +122,15 @@ render: (output)  -> """
 """
 
 update: (output, domEl) ->
-  $domEl = $(domEl)
-  xml = $.parseXML(output)
-  $xml = $(xml)
 
-  alert ""
+  #
+  # Change this setting to sort by departure time rather than alphabetically by destination
+  #
+  settings =
+    sortByTime: false
+
+  $domEl = $(domEl)
+  $xml = $($.parseXML(output))
 
   $domEl.find('#north').empty()
   $domEl.find('#south').empty()
@@ -131,46 +139,68 @@ update: (output, domEl) ->
 
   $departures = $xml.find('etd')
 
+  entries = []
+
   for departure in $departures
 
+    entry = {}
+
     $departure = $(departure)
-    destination = $departure.find('destination').text()
+    entry.destination = $departure.find('destination').text()
     $estimates = $departure.find('estimate')
-    min = ["", ""]
-    color = ["", ""]
+    entry.time = ["", ""]
+    entry.color = ["", ""]
     i = 0;
     j = 0;
     while $estimates[i] and j < 2
-      min[j] = $($estimates[i]).find('minutes').text()
-      color[j] = $($estimates[i]).find('hexcolor').text()
+      entry.time[j] = $($estimates[i]).find('minutes').text()
+      entry.color[j] = $($estimates[i]).find('hexcolor').text()
       i++
-      if(min[j] != "Leaving")
+      if(entry.time[j] != "Leaving")
         j++
 
-    direction = $($estimates[0]).find('direction').text().toLowerCase()
-    color[0] = "style='background-color: #{color[0]}'"
+    entry.direction = $($estimates[0]).find('direction').text().toLowerCase()
+    entry.color[0] = "style='background-color: #{entry.color[0]}'"
 
-    if(color[1])
-      color[1] = "style='background-color: #{color[1]}'"
+    if(entry.color[1])
+      entry.color[1] = "style='border-bottom: 14px solid #{entry.color[1]};'"
     else
-      color[1] = color[0]
+      entry.color[1] = ""
 
-    element = "<div class='train'>
-      <div class='color1' #{color[0]}></div>
-      <div class='color2' #{color[1]}></div>
-      <div>
-        <p>#{destination}:</p>
+    entries.push(entry)
+
+  if(settings.sortByTime)
+    entries.sort(@SortByTime)
+
+  for entry in entries
+    if(entry.time[0] == "Leaving")
+      console.log(entry)
+      continue
+
+    element = "
+    <div class='entry'>
+
+      <div class='color' #{entry.color[0]}>
+        <div class='subcolor' #{entry.color[1]}></div>
       </div>
+
+      <div class='destinations'>
+        <p>#{entry.destination}:</p>
+      </div>
+
       <div class='times'>
         <p>
-          #{min[0]}
-          <span>#{min[1]}</span>
+          #{entry.time[0]}
+          <span>#{entry.time[1]}</span>
         </p>
       </div>
-      </div>
+
     </div>"
-    $(element).appendTo("#" + direction)
+    $(element).appendTo("#" + entry.direction)
 
   $domEl.find('#update').html "Last Updated: " + $xml.find('time').text()
 
   $('#station').css('width', $domEl.find('#departures').height())
+
+SortByTime: (a, b) ->
+  return a.time[0] - b.time[0]
