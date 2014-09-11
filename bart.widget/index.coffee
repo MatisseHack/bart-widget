@@ -122,12 +122,11 @@ render: (output)  -> """
 """
 
 update: (output, domEl) ->
-
   #
-  # Change this setting to sort by departure time rather than alphabetically by destination
+  # Change this setting to sort by departure time or alphabetically by destination
   #
   settings =
-    sortByTime: false
+    sortByTime: true
 
   $domEl = $(domEl)
   $xml = $($.parseXML(output))
@@ -148,10 +147,12 @@ update: (output, domEl) ->
     $departure = $(departure)
     entry.destination = $departure.find('destination').text()
     $estimates = $departure.find('estimate')
+
     entry.time = ["", ""]
     entry.color = ["", ""]
     i = 0;
     j = 0;
+    
     while $estimates[i] and j < 2
       entry.time[j] = $($estimates[i]).find('minutes').text()
       entry.color[j] = $($estimates[i]).find('hexcolor').text()
@@ -191,7 +192,7 @@ update: (output, domEl) ->
       <div class='times'>
         <p>
           #{entry.time[0]}
-          <span>#{entry.time[1]}</span>
+          <span>, #{entry.time[1]}</span>
         </p>
       </div>
 
@@ -203,4 +204,8 @@ update: (output, domEl) ->
   $('#station').css('width', $domEl.find('#departures').height())
 
 SortByTime: (a, b) ->
-  return a.time[0] - b.time[0]
+  dif = a.time[0] - b.time[0]
+  if(dif != 0)
+    return dif
+  else
+    return a.time[1] - b.time[1]
