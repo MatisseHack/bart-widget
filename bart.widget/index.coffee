@@ -1,10 +1,10 @@
 # You must fill out the STOP_ID
 # A list of stop ID's is available here: http://api.bart.gov/docs/overview/abbrev.aspx
 # eg. dbrk, mont, embr, 12th...
-# 
+#
 # Other settings can be found bellow
 
-STOP_ID = ""
+STOP_ID = "mont"
 
 url = "http://api.bart.gov/api/etd.aspx?cmd=etd&orig=#{STOP_ID}&key=MW9S-E7SL-26DU-VV8V"
 
@@ -87,10 +87,11 @@ style: """
     width: 14px
     overflow: hidden
     border-radius: 5px
+    border: 1px solid rgba(#fff,.5)
 
   .subcolor
-    width: 0
-    height: 0
+    width: 0px
+    height: 0px
     border-left: 14px solid transparent
 
   #update
@@ -152,7 +153,7 @@ update: (output, domEl) ->
     entry.color = ["", ""]
     i = 0;
     j = 0;
-    
+
     while $estimates[i] and j < 2
       entry.time[j] = $($estimates[i]).find('minutes').text()
       entry.color[j] = $($estimates[i]).find('hexcolor').text()
@@ -162,6 +163,9 @@ update: (output, domEl) ->
 
     entry.direction = $($estimates[0]).find('direction').text().toLowerCase()
     entry.color[0] = "style='background-color: #{entry.color[0]}'"
+
+    if(entry.time[1])
+      entry.time[1] = ",  " + entry.time[1]
 
     if(entry.color[1])
       entry.color[1] = "style='border-bottom: 14px solid #{entry.color[1]};'"
@@ -175,7 +179,6 @@ update: (output, domEl) ->
 
   for entry in entries
     if(entry.time[0] == "Leaving")
-      console.log(entry)
       continue
 
     element = "
@@ -192,7 +195,7 @@ update: (output, domEl) ->
       <div class='times'>
         <p>
           #{entry.time[0]}
-          <span>, #{entry.time[1]}</span>
+          <span>#{entry.time[1]}</span>
         </p>
       </div>
 
