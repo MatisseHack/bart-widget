@@ -4,7 +4,7 @@
 #
 # Other settings can be found bellow
 
-STOP_ID = "mont"
+STOP_ID = ""
 
 url = "http://api.bart.gov/api/etd.aspx?cmd=etd&orig=#{STOP_ID}&key=MW9S-E7SL-26DU-VV8V"
 
