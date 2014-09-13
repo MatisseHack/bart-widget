@@ -1,14 +1,12 @@
-# You must fill out the STOP_ID
+# Settings
 # A list of stop ID's is available here: http://api.bart.gov/docs/overview/abbrev.aspx
-# eg. dbrk, mont, embr, 12th...
-#
-# Other settings can be found bellow
-
 STOP_ID = ""
 
-url = "http://api.bart.gov/api/etd.aspx?cmd=etd&orig=#{STOP_ID}&key=MW9S-E7SL-26DU-VV8V"
+textColor = "#fff"
+borderColor = "rgba(#fff,.5)"
+sortByTimes: true
 
-command: "curl -s '#{url}'"
+command: "curl -s 'http://api.bart.gov/api/etd.aspx?cmd=etd&orig=#{STOP_ID}&key=MW9S-E7SL-26DU-VV8V'"
 
 refreshFrequency: 20000
 
@@ -18,18 +16,16 @@ style: """
   top: 20px
   left: 20px
 
-  // font and font color
   font-family: Helvetica Neue
-  color: #fff
-
+  color: #{textColor}
   border-radius 5px
-  border solid 1px rgba(#fff,.5)
+  border solid 1px #{borderColor}
   padding 5px
 
   h1
     font-size: 14px
     text-transform: uppercase
-    border-bottom: solid 1px rgba(#fff,.5)
+    border-bottom: solid 1px #{borderColor}
     text-align: right
     opacity: 0.75
 
@@ -48,7 +44,7 @@ style: """
     text-transform: uppercase
     margin: 2.5px
     padding: 2.5px
-    border-bottom: solid 1px rgba(#fff,.5)
+    border-bottom: solid 1px #{borderColor}
 
   #departures
     padding-left: 5px
@@ -87,7 +83,7 @@ style: """
     width: 14px
     overflow: hidden
     border-radius: 5px
-    border: 1px solid rgba(#fff,.5)
+    border: 1px solid #{borderColor}
 
   .subcolor
     width: 0px
@@ -99,7 +95,7 @@ style: """
     font-size: 8px
     font-style: italic
     clear: both
-    border-top: dotted 1px rgba(#fff,.5)
+    border-top: dotted 1px #{borderColor}
     padding-top: 5px
 
 """
@@ -123,11 +119,6 @@ render: (output)  -> """
 """
 
 update: (output, domEl) ->
-  #
-  # Change this setting to sort by departure time or alphabetically by destination
-  #
-  settings =
-    sortByTime: true
 
   $domEl = $(domEl)
   $xml = $($.parseXML(output))
@@ -174,7 +165,7 @@ update: (output, domEl) ->
 
     entries.push(entry)
 
-  if(settings.sortByTime)
+  if (@sortByTimes)
     entries.sort(@SortByTime)
 
   for entry in entries
