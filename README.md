@@ -2,7 +2,7 @@
 
 An [Übersicht](http://tracesof.net/uebersicht) widget inspired by [this](https://github.com/joshuaswilcox/mbta-widget) widget. It displays the next two times of departure for each BART (Bay Area Rapid Transit) train leaving a particular stop.
 
-![Übersicht BART Widget](readme.png)
+![Übersicht BART Widget](screenshot.png)
 
 ##Installation
 
