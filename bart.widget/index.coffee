@@ -2,9 +2,10 @@
 # A list of stop ID's is available here: http://api.bart.gov/docs/overview/abbrev.aspx
 STOP_ID = ""
 
-textColor = "#fff"
-borderColor = "rgba(#fff,.5)"
+textColor = "#000"
+borderColor = "rgba(#000,.5)"
 sortByTimes: true
+# End settings
 
 command: "curl -s 'http://api.bart.gov/api/etd.aspx?cmd=etd&orig=#{STOP_ID}&key=MW9S-E7SL-26DU-VV8V'"
 
@@ -126,7 +127,7 @@ update: (output, domEl) ->
   $domEl.find('#north').empty()
   $domEl.find('#south').empty()
 
-  $domEl.find('#station').html $xml.find('name').text()
+  $domEl.find('#station').html($xml.find('name').text())
 
   $departures = $xml.find('etd')
 
@@ -191,11 +192,11 @@ update: (output, domEl) ->
       </div>
 
     </div>"
-    $(element).appendTo("#" + entry.direction)
+    $(element).appendTo($domEl.find("#" + entry.direction))
 
-  $domEl.find('#update').html "Last Updated: " + $xml.find('time').text()
+  $domEl.find('#update').html("Last Updated: " + $xml.find('time').text())
 
-  $('#station').css('width', $domEl.find('#departures').height())
+  $domEl.find('#station').css('width', $domEl.find('#departures').height())
 
 SortByTime: (a, b) ->
   dif = a.time[0] - b.time[0]
